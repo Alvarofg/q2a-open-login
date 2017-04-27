@@ -43,7 +43,13 @@ class qa_open_login {
 		
 		$action = null;
 		$key = null;
-		
+
+		// 'Facebook SDK returned an error: Cross-site request forgery validation failed. Required GET param "state" missing.' -- 
+		// START WORKAROUND
+		if( isset($_REQUEST['state']) ){
+			$_GET['state'] = $_REQUEST['state'];
+		}
+		//END WORKAROUND
 		if( !empty($_GET['hauth_start']) ) {
 			$key = trim(strip_tags($_GET['hauth_start']));
 			$action = 'process';
@@ -158,7 +164,7 @@ class qa_open_login {
 				$adapter = $hybridauth->getAdapter( $this->provider );
 				$adapter->logout();
 			}
-			
+
 		} catch(Exception $e) {
 			// not really interested in the error message - for now
 			// however, in case we have errors 6 or 7, then we have to call logout to clean everything up
@@ -280,7 +286,7 @@ HTML;
 						'key' => qa_opt("{$key}_app_id"), 
 						'secret' => qa_opt("{$key}_app_secret")
 					),
-					'scope' => $this->provider == 'Facebook' ? 'email,user_about_me,user_location,user_website' : null,
+					'scope' => $this->provider == 'Facebook' ? 'email' /*,user_about_me,user_location,user_website'*/ : null,
 				)
 			),
 			'debug_mode' => false,
