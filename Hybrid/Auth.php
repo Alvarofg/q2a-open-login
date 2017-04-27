@@ -15,7 +15,7 @@
  */
 class Hybrid_Auth {
 
-	public static $version = "2.6.0";
+	public static $version = "2.9.2";
 
 	/**
 	 * Configuration array
@@ -73,6 +73,7 @@ class Hybrid_Auth {
 
 		// build some need'd paths
 		$config["path_base"] = realpath(dirname(__FILE__)) . "/";
+		$config["path_vendor"] = realpath(dirname(__FILE__) . "/../../vendor");
 		$config["path_libraries"] = $config["path_base"] . "thirdparty/";
 		$config["path_resources"] = $config["path_base"] . "resources/";
 		$config["path_providers"] = $config["path_base"] . "Providers/";
@@ -352,13 +353,16 @@ class Hybrid_Auth {
 	 * @param string $mode PHP|JS
 	 */
 	public static function redirect($url, $mode = "PHP") {
+		if(!$mode){
+			$mode = 'PHP';
+		}
 		Hybrid_Logger::info("Enter Hybrid_Auth::redirect( $url, $mode )");
 
 		// Ensure session is saved before sending response, see https://github.com/symfony/symfony/pull/12341
 		if ((PHP_VERSION_ID >= 50400 && PHP_SESSION_ACTIVE === session_status()) || (PHP_VERSION_ID < 50400 && isset($_SESSION) && session_id())) {
 			session_write_close();
 		}
-
+	   
 		if ($mode == "PHP") {
 			header("Location: $url");
 		} elseif ($mode == "JS") {
